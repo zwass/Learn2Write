@@ -161,26 +161,51 @@ function minIndex (arr, fun) {
 }
 
 window.onload = function() {
+  var canvasWidth = 100, canvasHeight = 100;
+
   targetC = document.getElementById('targetCanvas').getContext('2d');
-  targetC.canvas.width = 100;
-  targetC.canvas.height = 100;
+  targetC.canvas.width = canvasWidth;
+  targetC.canvas.height = canvasHeight;
   targetC.font = "bold 100px sans-serif";
   targetC.textBaseline = "top";
   targetC.fillText("T", 0, 0);
 
-  bestC = new ObjectCanvas(100, 100);
+  bestC = new ObjectCanvas(canvasWidth, canvasHeight);
   bestC.canvas = document.getElementById('bestCanvas');
-  bestC.canvas.width = 100;
-  bestC.canvas.height = 100;
+  bestC.canvas.width = canvasWidth;
+  bestC.canvas.height = canvasHeight;
   bestC.context = bestC.canvas.getContext('2d');
   bestC.context.lineWidth = 12;
   bestC.draw();
   var bestDifference = computeContextDifference(bestC.context, targetC);
 
   var childCount = 5;
-  children = _(childCount).times(function () { return new ObjectCanvas(100, 100) });
+  children = _(childCount).times(function () { return new ObjectCanvas(canvasWidth, canvasHeight) });
   _.each(children, function (c) { document.body.appendChild(c.canvas) } );
 
+  function reset () {
+    bestC.objects = new CanvasObjectArray(canvasWidth, canvasHeight);
+    bestC.draw();
+    _.each(children, function (c) { c.context.clear() });
+  }
+  document.getElementById('resetButton').onclick = reset;
+
+  var updateLoopIntervalId;
+  var playing = true;
+
+  function playPause () {
+    if (playing) { // Pause
+      playing = false;
+      clearInterval(updateLoopIntervalId);
+      document.getElementById('playPauseButton').innerHTML = 'Play';
+    }
+    else { // Play
+      playing = true;
+      updateLoopIntervalId = window.setInterval(updateLoop, 100);
+      document.getElementById('playPauseButton').innerHTML = 'Pause';
+    }
+  }
+  document.getElementById('playPauseButton').onclick = playPause;
 
   function updateLoop () {
     // Draw the current best (ie. the parent)
@@ -202,6 +227,6 @@ window.onload = function() {
     console.log('best = ', bestIndex, bestChildDifference);
   }
 
-  window.setInterval(updateLoop, 100);
+  updateLoopIntervalId = window.setInterval(updateLoop, 100);
 
 };
