@@ -83,7 +83,7 @@ function CanvasObjectArray(width, height) {
   this.height = height;
   this.objects = [];
 }
-CanvasObjectArray.prototype.permute = function() {
+CanvasObjectArray.prototype.evolve = function() {
   // First randomly throw away some objects
   this.objects = _.filter(this.objects, function() { return _.random(4) > 0 });
   // Now randomly add some objects
@@ -101,6 +101,22 @@ CanvasObjectArray.prototype.draw = function(context) {
   context.clearRect(0, 0, context.width, context.height);
   _.map(this.objects, function(o) { o.draw(context) });
 }
+
+function ObjectCanvas (width, height) {
+  this.canvas = document.createElement('canvas');
+  this.canvas.width = width;
+  this.canvas.height = height;
+
+  this.context = this.canvas.getContext('2d');
+  this.context.lineWidth = 12;
+
+  this.objects = new CanvasObjectArray(width, height);
+}
+ObjectCanvas.prototype.draw = function () {
+  this.context.clear();
+  this.objects.draw(this.context);
+}
+
 
 function computeContextDifference(c1, c2) {
   if (c1.width != c2.width || c1.height != c2.height) {
@@ -135,8 +151,8 @@ function minIndex (arr, fun) {
   var vals = _.map(arr, fun);
   var minVal = vals[0];
   var minIndex = 0;
-  for (var i = 0; i < arr.length; i++){
-    if(vals[i] < minVal){
+  for (var i = 0; i < arr.length; i++) {
+    if (vals[i] < minVal) {
       minIndex = i;
       minVal = vals[i];
     }
@@ -150,45 +166,42 @@ window.onload = function() {
   targetC.canvas.height = 100;
   targetC.font = "bold 100px sans-serif";
   targetC.textBaseline = "top";
-  targetC.fillText("B", 0, 0);
+  targetC.fillText("T", 0, 0);
 
-  bestC = document.getElementById('bestCanvas').getContext('2d');
+  bestC = new ObjectCanvas(100, 100);
+  bestC.canvas = document.getElementById('bestCanvas');
   bestC.canvas.width = 100;
   bestC.canvas.height = 100;
-  bestC.lineWidth = 12;
+  bestC.context = bestC.canvas.getContext('2d');
+  bestC.context.lineWidth = 12;
+  bestC.draw();
+  var bestDifference = computeContextDifference(bestC.context, targetC);
+
+  var childCount = 5;
+  children = _(childCount).times(function () { return new ObjectCanvas(100, 100) });
+  _.each(children, function (c) { document.body.appendChild(c.canvas) } );
 
 
-  contexts = [];
-  var childCount = 5
-  for(var i = 0; i < childCount; i++){
-    var newCanvas = document.createElement('canvas');
-    newCanvas.width = 100;
-    newCanvas.height = 100;
-    document.body.appendChild(newCanvas);
-    var newContext = newCanvas.getContext('2d');
-    newContext.lineWidth = 12;
-    contexts.push(newContext);
-  }
+  function updateLoop () {
+    // Draw the current best (ie. the parent)
+    bestC.draw();
 
-  var parentObjectArray = new CanvasObjectArray(100, 100);
-  var bestDifference = 100;
+    // Create clones of the parent, and evolve them
+    _.each(children, function (c) { c.objects = bestC.objects.clone() });
+    _.each(children, function (c) { c.objects.evolve() });
+    _.each(children, function (c) { c.draw() });
 
-  updateLoop = function () {
-    bestC.clear();
-    parentObjectArray.draw(bestC);
-    var childObjectArrays = _(childCount).times(function() {return parentObjectArray.clone()});
-    _.invoke(childObjectArrays, 'permute')
-    _.invoke(contexts, 'clear');
-    _.map(_.zip(contexts, childObjectArrays), function (pair) { pair[1].draw(pair[0]) });
-    var bestIndex = minIndex(contexts, _.partial(computeContextDifference, targetC));
-    var bestChild = childObjectArrays[bestIndex];
-    if (computeContextDifference(contexts[bestIndex], targetC) < bestDifference) {
-      parentObjectArray = bestChild;
-      bestDifference = computeContextDifference(contexts[bestIndex], targetC);
+    // Find the best of the new batch and consider replacing the parent
+    var bestIndex = minIndex(children, function (c) { return computeContextDifference(targetC, c.context) });
+    var bestChild = children[bestIndex];
+    var bestChildDifference = computeContextDifference(bestChild.context, targetC);
+    if (bestChildDifference < bestDifference) {
+      bestC.objects = bestChild.objects;
+      bestDifference = bestChildDifference;
     }
-    console.log('best = ', bestIndex, computeContextDifference(contexts[bestIndex], targetC));
+    console.log('best = ', bestIndex, bestChildDifference);
   }
 
   window.setInterval(updateLoop, 100);
 
-}
+};
