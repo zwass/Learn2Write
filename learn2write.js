@@ -163,12 +163,13 @@ function minIndex (arr, fun) {
 window.onload = function() {
   var canvasWidth = 100, canvasHeight = 100;
 
+  var targetChar = "A";
   targetC = document.getElementById('targetCanvas').getContext('2d');
   targetC.canvas.width = canvasWidth;
   targetC.canvas.height = canvasHeight;
   targetC.font = "bold 100px sans-serif";
   targetC.textBaseline = "top";
-  targetC.fillText("T", 0, 0);
+  targetC.fillText(targetChar, 0, 0);
 
   bestC = new ObjectCanvas(canvasWidth, canvasHeight);
   bestC.canvas = document.getElementById('bestCanvas');
@@ -184,9 +185,15 @@ window.onload = function() {
   _.each(children, function (c) { document.body.appendChild(c.canvas) } );
 
   function reset () {
+    targetChar = document.getElementById('targetCharTextField').value;
+    targetC.clear();
+    targetC.fillText(targetChar, 0, 0);
+
     bestC.objects = new CanvasObjectArray(canvasWidth, canvasHeight);
     bestC.draw();
     _.each(children, function (c) { c.context.clear() });
+
+    bestDifference = computeContextDifference(bestC.context, targetC);
   }
   document.getElementById('resetButton').onclick = reset;
 
