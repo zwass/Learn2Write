@@ -1,4 +1,4 @@
-Object.getPrototypeOf(document.createElement('canvas').getContext('2d')).getImageAlphas =
+CanvasRenderingContext2D.prototype.getImageAlphas =
   function(x, y, width, height) {
     var imgData = this.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
     var alphas = [];
@@ -6,17 +6,17 @@ Object.getPrototypeOf(document.createElement('canvas').getContext('2d')).getImag
       alphas.push(imgData[i]);
     }
     return alphas;
-  }
+  };
 
-Object.getPrototypeOf(document.createElement('canvas').getContext('2d')).drawCanvasObject =
+CanvasRenderingContext2D.prototype.drawCanvasObject =
   function(object) {
    object.draw(this);
-  }
+  };
 
-Object.getPrototypeOf(document.createElement('canvas').getContext('2d')).clear =
+CanvasRenderingContext2D.prototype.clear =
   function() {
     this.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
+  };
 
 function Line(width, height) {
   this.startx = _.random(width);
@@ -46,7 +46,7 @@ QuadraticCurve.prototype.draw = function(context) {
   context.moveTo(this.startx, this.starty);
   context.quadraticCurveTo(this.cpx, this.cpy, this.endx, this.endy);
   context.stroke();
-}
+};
 
 function BezierCurve(width, height) {
   this.startx = _.random(width);
@@ -64,7 +64,7 @@ BezierCurve.prototype.draw = function(context) {
   context.moveTo(this.startx, this.starty);
   context.bezierCurveTo(this.cp1x, this.cp1y, this.cp2x, this.cp2y, this.endx, this.endy);
   context.stroke();
-}
+};
 
 
 function randomCanvasObject(width, height) {
@@ -90,17 +90,17 @@ CanvasObjectArray.prototype.evolve = function() {
   while (_.random(2) < 1) {
     this.objects.push(randomCanvasObject(this.width, this.height));
   }
-}
+};
 CanvasObjectArray.prototype.clone = function() {
   var newArray = new CanvasObjectArray(this.width, this.height);
   // Create a new array with the same contents
   newArray.objects = this.objects.slice(0);
   return newArray;
-}
+};
 CanvasObjectArray.prototype.draw = function(context) {
   context.clearRect(0, 0, context.width, context.height);
   _.map(this.objects, function(o) { o.draw(context) });
-}
+};
 
 function ObjectCanvas (width, height) {
   this.canvas = document.createElement('canvas');
@@ -116,7 +116,7 @@ function ObjectCanvas (width, height) {
 ObjectCanvas.prototype.draw = function () {
   this.context.clear();
   this.objects.draw(this.context);
-}
+};
 ObjectCanvas.prototype.highlight = function (color) {
   var oldStyle = this.context.strokeStyle;
   var oldWidth = this.context.lineWidth;
@@ -130,7 +130,7 @@ ObjectCanvas.prototype.highlight = function (color) {
   this.context.strokeStyle = oldStyle;
   this.context.lineWidth = oldWidth;
   this.objects.draw(this.context);
-}
+};
 
 function computeContextDifference(c1, c2) {
   if (c1.width != c2.width || c1.height != c2.height) {
