@@ -210,6 +210,7 @@ window.onload = function() {
     bestDifference = computeContextDifference(bestC.context, targetC);
   }
   document.getElementById('resetButton').onclick = reset;
+  document.getElementById('targetButton').onclick = reset;
 
   var updateLoopIntervalId;
   var playing = true;
@@ -218,12 +219,12 @@ window.onload = function() {
     if (playing) { // Pause
       playing = false;
       clearInterval(updateLoopIntervalId);
-      document.getElementById('playPauseButton').innerHTML = 'Play';
+      document.getElementById('playPauseButton').innerHTML = '<i class="icon-play"></i>';
     }
     else { // Play
       playing = true;
       updateLoopIntervalId = window.setInterval(updateLoop, 100);
-      document.getElementById('playPauseButton').innerHTML = 'Pause';
+      document.getElementById('playPauseButton').innerHTML = '<i class="icon-pause"></i>';
     }
   }
   document.getElementById('playPauseButton').onclick = playPause;
@@ -252,6 +253,22 @@ window.onload = function() {
     }
   }
 
-  updateLoopIntervalId = window.setInterval(updateLoop, 100);
+  document.getElementById("stepButton").onclick = updateLoop;
+
+  var loopInterval = 100;
+
+  document.getElementById("fasterButton").onclick = function () {
+    loopInterval /= 2;
+    clearInterval(updateLoopIntervalId);
+    updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
+  }
+
+  document.getElementById("slowerButton").onclick = function () {
+    loopInterval *= 2;
+    clearInterval(updateLoopIntervalId);
+    updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
+  }
+
+  updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
 
 };

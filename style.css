@@ -10,16 +10,20 @@ body {
 #pageContainer {
     position: relative;
     width: 960px;
+    margin: 0px auto;
     padding: 10px 0px;
     background-image: url('retina_wood.png');
     background-repeat: repeat;
 }
 
+#contentContainer {
+    width: 610px;
+    margin: 0px auto;
+}
+
 #paperContainer {
     position: relative;
-    width: 610px;
-    height: 600px;
-    margin: 0px auto;
+    height: 310px;
     background-image: url('lined_paper.png');
     background-repeat: repeat;
 }
@@ -27,13 +31,13 @@ body {
 #targetLabel {
     position: absolute;
     left: 20px;
-    top: 15px;
+    top: 30px;
 }
 
 #bestLabel {
     position: absolute;
     left: 370px;
-    top: 15px;
+    top: 30px;
 }
 
 #canvasContainer {
@@ -60,15 +64,43 @@ body {
 #childLabel {
     position: absolute;
     left: 200px;
-    top: 110px;
+    top: 125px;
 }
 
 #controlsContainer {
-    position: absolute;
-    top: 350px;
+    position: relative;
 }
 
 .childCanvas {
     position: relative;
     margin: 0px 8px;
+}
+
+#targetCharTextField {
+    width: 1em;
+}
+
+#playPauseButton {
+
+}
+
+.stretch {
+    width: 100%;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0
+}
+
+#alignContainer {
+    margin: 10px 60px;
+     text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+}
+
+#alignContainer div {
+    vertical-align: top;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
 }
