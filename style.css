@@ -1,4 +1,74 @@
 body {
+    margin: 0px;
+}
+
+.labelText {
+    font-family: 'Patrick Hand SC', cursive;
+    font-size: 38px;
+}
+
+#pageContainer {
+    position: relative;
+    width: 960px;
+    padding: 10px 0px;
+    background-image: url('retina_wood.png');
+    background-repeat: repeat;
+}
+
+#paperContainer {
+    position: relative;
+    width: 610px;
+    height: 600px;
+    margin: 0px auto;
     background-image: url('lined_paper.png');
     background-repeat: repeat;
+}
+
+#targetLabel {
+    position: absolute;
+    left: 20px;
+    top: 15px;
+}
+
+#bestLabel {
+    position: absolute;
+    left: 370px;
+    top: 15px;
+}
+
+#canvasContainer {
+    position: relative;
+    left: 20px;
+    top: 50px;
+}
+
+#targetCanvas {
+    position: relative;
+    left: 70px;
+}
+
+#bestCanvas {
+    position: relative;
+    left: 310px;
+}
+
+#childContainer {
+    position: relative;
+    top: 40px;
+}
+
+#childLabel {
+    position: absolute;
+    left: 200px;
+    top: 110px;
+}
+
+#controlsContainer {
+    position: absolute;
+    top: 350px;
+}
+
+.childCanvas {
+    position: relative;
+    margin: 0px 8px;
 }

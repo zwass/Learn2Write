@@ -106,6 +106,7 @@ function ObjectCanvas (width, height) {
   this.canvas = document.createElement('canvas');
   this.canvas.width = width;
   this.canvas.height = height;
+  this.canvas.className = "childCanvas";
 
   this.context = this.canvas.getContext('2d');
   this.context.lineWidth = 12;
@@ -116,7 +117,20 @@ ObjectCanvas.prototype.draw = function () {
   this.context.clear();
   this.objects.draw(this.context);
 }
+ObjectCanvas.prototype.highlight = function (color) {
+  var oldStyle = this.context.strokeStyle;
+  var oldWidth = this.context.lineWidth;
 
+  this.context.clear();
+  this.context.strokeStyle = color;
+  this.context.lineWidth = 4;
+
+  this.context.strokeRect(0, 0, this.canvas.width, this.canvas.height);
+
+  this.context.strokeStyle = oldStyle;
+  this.context.lineWidth = oldWidth;
+  this.objects.draw(this.context);
+}
 
 function computeContextDifference(c1, c2) {
   if (c1.width != c2.width || c1.height != c2.height) {
@@ -182,7 +196,7 @@ window.onload = function() {
 
   var childCount = 5;
   children = _(childCount).times(function () { return new ObjectCanvas(canvasWidth, canvasHeight) });
-  _.each(children, function (c) { document.body.appendChild(c.canvas) } );
+  _.each(children, function (c) { document.getElementById("childContainer").appendChild(c.canvas) } );
 
   function reset () {
     targetChar = document.getElementById('targetCharTextField').value;
@@ -228,10 +242,14 @@ window.onload = function() {
     var bestChild = children[bestIndex];
     var bestChildDifference = computeContextDifference(bestChild.context, targetC);
     if (bestChildDifference < bestDifference) {
+      bestChild.highlight("rgba(70, 136, 71, 0.5)");
       bestC.objects = bestChild.objects;
+      bestC.highlight("rgba(70, 136, 71, 0.5)");
       bestDifference = bestChildDifference;
     }
-    console.log('best = ', bestIndex, bestChildDifference);
+    else {
+      bestChild.highlight("rgba(192, 152, 83, 0.5)");
+    }
   }
 
   updateLoopIntervalId = window.setInterval(updateLoop, 100);
