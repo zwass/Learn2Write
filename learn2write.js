@@ -148,30 +148,16 @@ function computeContextDifference(c1, c2) {
   return (sum / 255.0 * 100) / alphas1.length;
 }
 
-function argMin (arr, fun) {
-  var vals = _.map(arr, fun);
-  var minVal = vals[0];
-  var minIndex = 0;
-  for (var i = 0; i < arr.length; i++){
-    if(vals[i] < minVal){
-      minIndex = i;
-      minVal = vals[i];
-    }
-  }
-  return arr[minIndex];
-}
-
-function minIndex (arr, fun) {
-  var vals = _.map(arr, fun);
-  var minVal = vals[0];
-  var minIndex = 0;
+function minIndex (arr) {
+  var minVal = arr[0];
+  var minI = 0;
   for (var i = 0; i < arr.length; i++) {
-    if (vals[i] < minVal) {
-      minIndex = i;
-      minVal = vals[i];
+    if (arr[i] < minVal) {
+      minI = i;
+      minVal = arr[i];
     }
   }
-  return minIndex;
+  return minI;
 }
 
 window.onload = function() {
@@ -239,9 +225,10 @@ window.onload = function() {
     _.each(children, function (c) { c.draw(); });
 
     // Find the best of the new batch and consider replacing the parent
-    var bestIndex = minIndex(children, function (c) { return computeContextDifference(targetC, c.context); });
-    var bestChild = children[bestIndex];
-    var bestChildDifference = computeContextDifference(bestChild.context, targetC);
+    var childDifferences = _.map(children, function (c) { return computeContextDifference(targetC, c.context); });
+    var bestI = minIndex(childDifferences);
+    var bestChild = children[bestI];
+    var bestChildDifference = childDifferences[bestI];
     if (bestChildDifference < bestDifference) {
       bestChild.highlight("rgba(70, 136, 71, 0.5)");
       bestC.objects = bestChild.objects;
@@ -271,12 +258,12 @@ window.onload = function() {
 
   updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
 
+  // For handling clickable characters in bottom of page text
   function charLinkClicked () {
     document.getElementById("targetCharTextField").value = this.innerHTML;
     reset();
     return false;
   }
-
   _.each(document.getElementsByClassName("charLink"),
          function (a) { a.onclick = charLinkClicked; });
 
