@@ -3,4 +3,4 @@ Learn2Write
 
 Teaching HTML5 Canvas how to write, using evolutionary algorithms.
 
-Currently, you just gotta open up index.html to watch it run.
+Check out the [live demo](http://zwass.github.io/Learn2Write "Live Demo")!
