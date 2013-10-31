@@ -73,7 +73,7 @@ function randomCanvasObject(width, height) {
     return new Line(width, height);
   case 1:
     return new QuadraticCurve(width, height);
-  case 2:
+  default:
     return new BezierCurve(width, height);
   }
 }
@@ -85,7 +85,7 @@ function CanvasObjectArray(width, height) {
 }
 CanvasObjectArray.prototype.evolve = function() {
   // First randomly throw away some objects
-  this.objects = _.filter(this.objects, function() { return _.random(4) > 0 });
+  this.objects = _.filter(this.objects, function() { return _.random(4) > 0; });
   // Now randomly add some objects
   while (_.random(2) < 1) {
     this.objects.push(randomCanvasObject(this.width, this.height));
@@ -99,7 +99,7 @@ CanvasObjectArray.prototype.clone = function() {
 };
 CanvasObjectArray.prototype.draw = function(context) {
   context.clearRect(0, 0, context.width, context.height);
-  _.map(this.objects, function(o) { o.draw(context) });
+  _.map(this.objects, function(o) { o.draw(context); });
 };
 
 function ObjectCanvas (width, height) {
@@ -141,7 +141,7 @@ function computeContextDifference(c1, c2) {
   var alphas2 = c2.getImageAlphas();
 
   var diffs = _.map(_.zip(alphas1, alphas2),
-                   function(pair) { return Math.abs(pair[0] - pair[1]) });
+                   function(pair) { return Math.abs(pair[0] - pair[1]); });
 
   var sum = _.reduce(diffs, function(s, cur) { return s + cur; });
 
@@ -195,8 +195,8 @@ window.onload = function() {
   var bestDifference = computeContextDifference(bestC.context, targetC);
 
   var childCount = 5;
-  children = _(childCount).times(function () { return new ObjectCanvas(canvasWidth, canvasHeight) });
-  _.each(children, function (c) { document.getElementById("childContainer").appendChild(c.canvas) } );
+  children = _(childCount).times(function () { return new ObjectCanvas(canvasWidth, canvasHeight); });
+  _.each(children, function (c) { document.getElementById("childContainer").appendChild(c.canvas); } );
 
   function reset () {
     targetChar = document.getElementById('targetCharTextField').value;
@@ -205,7 +205,7 @@ window.onload = function() {
 
     bestC.objects = new CanvasObjectArray(canvasWidth, canvasHeight);
     bestC.draw();
-    _.each(children, function (c) { c.context.clear() });
+    _.each(children, function (c) { c.context.clear(); });
 
     bestDifference = computeContextDifference(bestC.context, targetC);
   }
@@ -234,12 +234,12 @@ window.onload = function() {
     bestC.draw();
 
     // Create clones of the parent, and evolve them
-    _.each(children, function (c) { c.objects = bestC.objects.clone() });
-    _.each(children, function (c) { c.objects.evolve() });
-    _.each(children, function (c) { c.draw() });
+    _.each(children, function (c) { c.objects = bestC.objects.clone(); });
+    _.each(children, function (c) { c.objects.evolve(); });
+    _.each(children, function (c) { c.draw(); });
 
     // Find the best of the new batch and consider replacing the parent
-    var bestIndex = minIndex(children, function (c) { return computeContextDifference(targetC, c.context) });
+    var bestIndex = minIndex(children, function (c) { return computeContextDifference(targetC, c.context); });
     var bestChild = children[bestIndex];
     var bestChildDifference = computeContextDifference(bestChild.context, targetC);
     if (bestChildDifference < bestDifference) {
@@ -261,13 +261,13 @@ window.onload = function() {
     loopInterval /= 2;
     clearInterval(updateLoopIntervalId);
     updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
-  }
+  };
 
   document.getElementById("slowerButton").onclick = function () {
     loopInterval *= 2;
     clearInterval(updateLoopIntervalId);
     updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
-  }
+  };
 
   updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
 
@@ -278,6 +278,6 @@ window.onload = function() {
   }
 
   _.each(document.getElementsByClassName("charLink"),
-         function (a) { a.onclick = charLinkClicked });
+         function (a) { a.onclick = charLinkClicked; });
 
 };
