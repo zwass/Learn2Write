@@ -271,4 +271,13 @@ window.onload = function() {
 
   updateLoopIntervalId = window.setInterval(updateLoop, loopInterval);
 
+  function charLinkClicked () {
+    document.getElementById("targetCharTextField").value = this.innerHTML;
+    reset();
+    return false;
+  }
+
+  _.each(document.getElementsByClassName("charLink"),
+         function (a) { a.onclick = charLinkClicked });
+
 };
