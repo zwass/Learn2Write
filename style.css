@@ -1,3 +1,7 @@
+body {
+    margin: 5px 0px;
+}
+
 .labelText {
     font-family: 'Patrick Hand SC', cursive;
     font-size: 38px;
